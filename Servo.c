@@ -32,12 +32,12 @@ void setup()
     // SET UP GPIO FOR SERVO NUMBER ONE
     gpio_init(servoOnePin);    // initialize the pin connected to servo number one
     gpio_set_dir(servoOnePin, true);   // set the direction of the pin
-    gpio_set_function(servoOnePin, GPIO_FUNC_PWM);  // enable PWM on the pin
+    gpio_set_functon(servoOnePin, GPIO_FUNC_PWM);  // enable PWM on the pin
 
     // SET UP GPIO FOR SERVO NUMBER TWO
     gpio_init(servoTwoPin);    // initialize the pin connected to servo number two
     gpio_set_dir(servoTwoPin, true);   // set the direction of the pin
-    gpio_set_function(servoTwoPin, GPIO_FUNC_PWM);  // enable PWM on the pin
+    gpio_set_functon(servoTwoPin, GPIO_FUNC_PWM);  // enable PWM on the pin
 
     // CONFIGURE PWM
     pwm_set_clkdiv_int_frac(slice, DIVi, DIVf); // specify the DIVi and DIVf values
@@ -49,17 +49,17 @@ void setup()
 
 void rotateServoOne()
 {
-    pwm_set_chan_level(slice, channelOne, (cc * 15));   // rotate the servo to 15 degrees
+    pwm_set_chan_level(slice, channelOne, ((cc * 15) + ccMin));   // rotate the servo to 15 degrees
     sleep_ms(5000); // wait for 5 seconds
-    pwm_set_chan_level(slice, channelOne, (cc * 135));  // rotate the servo to 135 degrees
+    pwm_set_chan_level(slice, channelOne, ((cc * 130) + ccMin));  // rotate the servo to 130 degrees
     sleep_ms(5000); // wait for 5 seconds
 }
 
 void rotateServoTwo()
 {
-    pwm_set_chan_level(slice, channelTwo, (cc * 15));   // rotate the servo to 15 degrees
+    pwm_set_chan_level(slice, channelTwo, ((cc * 15) + ccMin));   // rotate the servo to 15 degrees
     sleep_ms(5000); // wait for 5 seconds
-    pwm_set_chan_level(slice, channelTwo, (cc * 135));  // rotate the servo to 135 degrees
+    pwm_set_chan_level(slice, channelTwo, ((cc * 130) + ccMin));  // rotate the servo to 130 degrees
     sleep_ms(5000); // wait for 5 seconds
 }
 

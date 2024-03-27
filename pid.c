@@ -59,7 +59,7 @@ float ki = 0.0;      // variable for the integral gain (constant error)
 
 void touchSetup()       // function for setting up the touchscreen
 {
-    stdio_init_all();
+    
 
     // Setup GPIOs to work with I2C
     gpio_init(SCL);
@@ -97,17 +97,18 @@ void motorSetup()                                               // function for 
 
 void readTouchscreenTask()                                      // function to read the current x and y position on the touchscreen
 {
-    i2c_write_blocking(i2c0, addr, snd, 1, 1); // writes command register to the target
+    // for x measurement
     i2c_write_blocking(i2c0, addr, x_pos, 1, 1);
     i2c_read_blocking(i2c0, addr, x, 2, 0); // reads 2 byte long x value from the target
-    i2c_write_blocking(i2c0, addr, snd, 1, 1); // writes command register to the target
 
+    // for y measurement
     i2c_write_blocking(i2c0, addr, y_pos, 1, 1); // writes command register to the target
     i2c_read_blocking(i2c0, addr, y, 2, 0); // reads 1 byte long y values from target
-
-    // solve for positiion
-    xcurrent = (((uint16_t)x[0] << 4) | (x[1] >> 4))*(3.3/4096);
-    ycurrent = (((uint16_t)y[0] << 4) | (y[1] >> 4))*(3.3/4096);
+    
+    pos_x = (((uint16_t)x[0] << 4) | (x[1] >> 4))*(3.3/4096);
+    printf("The current x position is: %f\n", pos_x);  
+    pos_y = (((uint16_t)y[0] << 4) | (y[1] >> 4))*(3.3/4096);
+    printf("The current y position is: %f\n", pos_y);
 }
 
 void controlMotorsTask()        // function to move the servo motors
@@ -116,23 +117,9 @@ void controlMotorsTask()        // function to move the servo motors
     pwm_set_chan_level(7, 1, ycc);                             // rotate the y axis servo
 }
 
-int main()
+void PID()
 {
-    touchSetup();                                                   // call the touchscreen setup function
-
-    motorSetup();                                                   // call the motor setup function
-
-    while (true)
-    {
-        uint currenttime = time_us_32();        // variable for the current clock time
-
-        if ((currenttime - lasttouchcalled) >= touchdt)     // if 5 ms has passed since the last time the read touchscreen task function was called
-        {
-            readTouchscreenTask();      // call the read touchscreen task function
-            lasttouchcalled = currenttime;      // set the last time the read touchscreen task function was called to the current time
-        }
-
-        currentxerror = xdesired - xcurrent;    // calculate the current x axis error
+    currentxerror = xdesired - xcurrent;    // calculate the current x axis error
         currentyerror = ydesired - ycurrent;   // calculate the current y axis error
 
         dxerror = (currentxerror - lastxerror) / dt;     // calculate the derivative of the x axis error
@@ -144,14 +131,33 @@ int main()
         taux = kp * currentxerror + kd * dxerror + ki * ixerror;       // calculate tau for x
         tauy = kp * currentyerror + kd * dyerror + ki * iyerror;       // calculate tau for y
 
-        // calculate how much to move the x axis
-        // calculate how much to move the y axis
+}
 
-        if ((currenttime - lastmotorcalled) >= motordt)     // if 20 ms has passed since the last time the control motors task function was called 
+int main()
+{
+    stdio_init_all();
+
+    touchSetup();                                                   // call the touchscreen setup function
+
+    //motorSetup();                                                   // call the motor setup function
+
+    while (true)
+    {
+        uint currenttime = time_us_32();        // variable for the current clock time
+
+        if ((currenttime - lasttouchcalled) >= touchdt)     // if 5 ms has passed since the last time the read touchscreen task function was called
         {
-            controlMotorsTask();        // call the control motors task function
-            lastmotorcalled = currenttime;      // set the last time the control motors task function was called to the current time
+            readTouchscreenTask();      // call the read touchscreen task function
+            lasttouchcalled = currenttime;      // set the last time the read touchscreen task function was called to the current time
         }
+
+        // PID();
+
+        //if ((currenttime - lastmotorcalled) >= motordt)     // if 20 ms has passed since the last time the control motors task function was called 
+        //{
+        //    controlMotorsTask();        // call the control motors task function
+        //    lastmotorcalled = currenttime;      // set the last time the control motors task function was called to the current time
+        //}
 
         lastxerror = currentxerror;     // set the last x error to the current x error
         lastyerror = currentyerror;     // set the last y error to the current y error

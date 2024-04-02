@@ -174,6 +174,11 @@ void motorControlTask()
     pwm_set_chan_level(sliceTwo, channelTwo, ccTwo);
 }
 
+printData()
+{
+    printf("%f.2\t%f.2\t%f.2\t%f.2\t%f.2\t%f.2\t%f.2\t%f.2\n", xcurrent, ycurrent, currentxerror, currentyerror, dxerror, dyerror, taux, tauy);
+}
+
 int main()
 {
     stdio_init_all();
@@ -181,6 +186,7 @@ int main()
     touchscreenSetup();
 
     motorSetup();
+    printf("\nxcurrent\tycurrent\tcurrentxerror\tcurrentyerror\tdxerror\tdyerror\ttaux\ttauy\n");
 
     while (true)
     {
@@ -198,6 +204,8 @@ int main()
             motorControlTask();        // call the control motors task function
             lastmotorcalled = currenttime;      // set the last time the control motors task function was called to the current time
         }
+        
+        printData(); // print data for graphing
          
     }
 }

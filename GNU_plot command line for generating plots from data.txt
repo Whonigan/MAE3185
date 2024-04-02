@@ -1,0 +1,1 @@
+// copy and paste line into GNU plot to generate plots from data.txt

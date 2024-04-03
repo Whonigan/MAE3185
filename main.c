@@ -35,6 +35,7 @@ const uint touchdt = 5000;      // variable for how often the read touchscreen t
 const uint motordt = 20000;     // variable for how often the control motors task should be executed
 uint lasttouchcalled = 0;       // variable for the last time the read touchscreen task was executed
 uint lastmotorcalled = 0;       // variable for the last time the control motors task was executed
+uint currenttime; // current time variable
 
 // PID VARIABLES
 float dt = 0.0;              // variable for the differential amount of time
@@ -176,7 +177,7 @@ void motorControlTask()
 
 printData()
 {
-    printf("%f.2\t%f.2\t%f.2\t%f.2\t%f.2\t%f.2\t%f.2\t%f.2\n", xcurrent, ycurrent, currentxerror, currentyerror, dxerror, dyerror, taux, tauy);
+    printf("%d\t%f.2\t%f.2\t%f.2\t%f.2\t%f.2\t%f.2\t%f.2\t%f.2\n", currenttime, xcurrent, ycurrent, currentxerror, currentyerror, dxerror, dyerror, taux, tauy);
 }
 
 int main()
@@ -186,7 +187,7 @@ int main()
     touchscreenSetup();
 
     motorSetup();
-    printf("\nxcurrent\tycurrent\tcurrentxerror\tcurrentyerror\tdxerror\tdyerror\ttaux\ttauy\n");
+    printf("\ncurrenttime\txcurrent\tycurrent\tcurrentxerror\tcurrentyerror\tdxerror\tdyerror\ttaux\ttauy\n");
 
     while (true)
     {

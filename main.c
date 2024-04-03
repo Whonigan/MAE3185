@@ -144,7 +144,7 @@ void pidCalculation()
     
     dt = touchdt;
 
-    currentxerror = xcurrent - xdesirerd;    // calculate the current x axis error
+    currentxerror = xcurrent - xdesired;    // calculate the current x axis error
     currentyerror = ycurrent - ydesired;   // calculate the current y axis error
 
     //printf("Current X Error: %f\tCurrent Y Error: %f\n", currentxerror, currentyerror);

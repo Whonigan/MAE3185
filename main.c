@@ -50,8 +50,8 @@ float dt = 0.0;              // variable for the differential amount of time
 float dxerror = 0.0;         // variable for the derivative of the x axis error
 float dyerror = 0.0;         // variable for the derivative of the y axis error
 
-float xdesired = 1.65;    // variable for the desired x axis position of the ball
-float ydesired = 1.65;    // variable for the desired y axis position of the ball
+float xdesired = 82.5;    // variable for the desired x axis position of the ball
+float ydesired = 52.5;    // variable for the desired y axis position of the ball
 float currentxerror = 0.0;       // variable for the current x axis error (distance between the desired position and the actual position)
 float currentyerror = 0.0;       // variable for the curent y axis error (distance between the desired position and the actual position)
 float lastxerror = 0.0;      // variable for the last x axis error (distance between the desired position and the actual position)

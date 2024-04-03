@@ -136,7 +136,7 @@ void readTouchscreenTask()                                      // function to r
 
 void pidCalculation()
 {
-    float kp = 10.0;      // variable for the proportional gain (response of the system)
+    float kp = 2.0;      // variable for the proportional gain (response of the system)
     float kd = 0.0;      // variable for the derivative gain (undershooting or overshooting)
     float ki = 0.0;      // variable for the integral gain (constant error)
     static float ixerror = 0.0;         // variable for the integral of the x axis error
@@ -144,8 +144,8 @@ void pidCalculation()
     
     dt = touchdt;
 
-    currentxerror = xdesired - xcurrent;    // calculate the current x axis error
-    currentyerror = ydesired - ycurrent;   // calculate the current y axis error
+    currentxerror = xcurrent - xdesirerd;    // calculate the current x axis error
+    currentyerror = ycurrent - ydesired;   // calculate the current y axis error
 
     //printf("Current X Error: %f\tCurrent Y Error: %f\n", currentxerror, currentyerror);
 
@@ -164,7 +164,7 @@ void pidCalculation()
 
     //printf("Proportional X: %f\tProportional Y: %f\n", (kp * currentxerror), (kp * currentyerror));
 
-    printf("taux: %f\ttauy: %f\n", taux, tauy);
+    //printf("taux: %f\ttauy: %f\n", taux, tauy);
 
     lastxerror = currentxerror;     // set the last x error to the current x error
     lastyerror = currentyerror;     // set the last y error to the current y error
@@ -172,14 +172,9 @@ void pidCalculation()
 
 void motorControlTask()
 { 
-    //uint16_t ccOne = (uint16_t) ((1363 * taux) + 1500);    // 180* degrees of rotation (54.5454* for 1 x value -or- 1363 cc for 1 x value)
-    //uint16_t ccTwo = (uint16_t) ((1363 * tauy) + 1500);    // 180* degress of rotation (54.5454* for 1 y value -or- 1363 cc for 1 y value)
-
-    //uint16_t ccOne = (uint16_t) ((681.81 * taux) + 2625);    // 90* degrees of rotation (27.2727* for 1 x value -or- 681.81 cc for 1 x value)
-    //uint16_t ccTwo = (uint16_t) ((681.81 * tauy) + 2625);    // 90* degress of rotation (27.2727* for 1 y value -or- 681.81 cc for 1 y value)
-
-    uint16_t ccOne = (uint16_t) ((340.9 * taux) + 3187.5);    // 45* degrees of rotation (13.6363* for 1 x value -or- 340.90 cc for 1 x value)
-    uint16_t ccTwo = (uint16_t) ((340.9 * tauy) + 3187.5);    // 45* degress of rotation (13.6363* for 1 y value -or- 340.90 cc for 1 y value)
+    uint16_t ccOne = taux + 3750;
+    tauy != tauy;
+    uint16_t ccTwo = tauy + 3750;
 
     //printf("ccOne: %d\tccTwo: %d\n", ccOne, ccTwo);
 

@@ -15,9 +15,17 @@
 #define addr 0x48 // touchscreen target address both A0 and A1 are held low making address 1001000
 const int Lx = 165;
 const int Ly = 105;
+const double o_x = Lx/2; // x origin
+const double o_y = Ly/2; // y origin
 float xcurrent = 0;  // creates a variable that reads x position
 float ycurrent = 0;  // creates a variable that reads y position
-uint8_t snd[1] = {0xB0}; // 10110000 pg.25
+float zcurrent = 0;    // creates a variable that reads z position
+uint8_t x_pos[1] = {0xC0};
+uint8_t y_pos[1] = {0xD0};
+uint8_t z_pos[1] = {0xE0}; // for z1
+uint8_t x[2] = {0, 0};
+uint8_t y[2] = {0, 0};
+uint8_t z[2] = {0, 0};
 
 // SERVO
 uint16_t ccOne = 0;
@@ -94,31 +102,35 @@ void motorSetup()
 
 void readTouchscreenTask()                                      // function to read the current x and y position on the touchscreen
 {   
-    uint8_t x_pos[1] = {0xC0};
-    uint8_t y_pos[1] = {0xD0};
-    uint8_t x[2] = {0, 0};
-    uint8_t y[2] = {0, 0};
+// setting to zero
+  xcurrent = 0;  
+  ycurrent = 0;  
+  zcurrent = 0; 
 
-//    i2c_write_blocking(i2c0, addr, snd, 1, 1);          // writes command register
-    i2c_write_blocking(i2c0, addr, x_pos, 1, 1);
+  i2c_write_blocking(i2c0, addr, z_pos, 1, 1); // writes command register to the target
+  i2c_read_blocking(i2c0, addr, z, 2, 0); // reads 2 byte long z value from the target
+  zcurrent = ((((uint16_t)z[0] << 4) | (z[1] >> 4))*(3.3/4096));
+
+  if (zcurrent > 0.1) // checks for conditions of whether the screen is touched or not and allows us to determine whether the screen can be set to home position to control motors
+  {
+    i2c_write_blocking(i2c0, addr, x_pos, 1, 1); // writes command register to the target
     i2c_read_blocking(i2c0, addr, x, 2, 0); // reads 2 byte long x value from the target
 
     i2c_write_blocking(i2c0, addr, y_pos, 1, 1); // writes command register to the target
     i2c_read_blocking(i2c0, addr, y, 2, 0); // reads 1 byte long y values from target
-    
-    xcurrent = (((uint16_t)x[0] << 4) | (x[1] >> 4))*(3.3/4096); 
-    ycurrent = (((uint16_t)y[0] << 4) | (y[1] >> 4))*(3.3/4096);
 
-    if ( xcurrent < 0.01 || xcurrent > 3.29 )
-    {
-        xcurrent = 1.65;
-    }
+      // solve for positiion
+    xcurrent = ((((uint16_t)x[0] << 4) | (x[1] >> 4))*(3.3/4096)/3.3)*Lx;
+    ycurrent = ((((uint16_t)y[0] << 4) | (y[1] >> 4))*(3.3/4096)/3.3)*Ly;
+  }
 
-    if ( ycurrent < 0.01 || ycurrent > 3.29 )
-    {
-        ycurrent = 1.65;
-    }
-    //printf("X position: %f\tY position: %f\n", xcurrent, ycurrent);
+  else
+  {
+    xcurrent = Lx/2;
+    ycurrent = Ly/2;
+  }
+
+  // printf("%.2f\t%.2f\n",  xcurrent, ycurrent); 
 }
 
 void pidCalculation()
@@ -186,6 +198,7 @@ int main()
     touchscreenSetup();
 
     motorSetup();
+    sleep_ms(10000);
     printf("\nxcurrent\tycurrent\tcurrentxerror\tcurrentyerror\tdxerror\tdyerror\ttaux\ttauy\n");
 
     while (true)

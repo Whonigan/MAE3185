@@ -37,10 +37,14 @@ uint8_t channelTwo;
 uint8_t divI = 50;
 uint8_t divF = 0;
 uint16_t top = 37499;
+uint16_t flatX = 3750;
+uint16_t flatY = 3750;
+uint16_t mapX = (165/45) * 25;
+uint16_t mapY = (105/45) * 25;
 
 // TIMING
-const uint touchdt = 5000;      // variable for how often the read touchscreen task should be executed
-const uint motordt = 20000;     // variable for how often the control motors task should be executed
+const uint touchdt = 5;      // variable for how often the read touchscreen task should be executed
+const uint motordt = 20;     // variable for how often the control motors task should be executed
 uint lasttouchcalled = 0;       // variable for the last time the read touchscreen task was executed
 uint lastmotorcalled = 0;       // variable for the last time the control motors task was executed
 uint currenttime; // current time variable
@@ -85,7 +89,7 @@ void motorSetup()
 
     pwm_set_clkdiv_int_frac(sliceOne, divI, divF);
     pwm_set_wrap(sliceOne, top);
-    pwm_set_chan_level(sliceOne, channelOne, 3750);
+    pwm_set_chan_level(sliceOne, channelOne, flatX);
     pwm_set_enabled(sliceOne, true);
 
     gpio_init(servoTwoPin);
@@ -97,7 +101,7 @@ void motorSetup()
 
     pwm_set_clkdiv_int_frac(sliceTwo, divI, divF);
     pwm_set_wrap(sliceTwo, top);
-    pwm_set_chan_level(sliceTwo, channelTwo, 3750);
+    pwm_set_chan_level(sliceTwo, channelTwo, flatY);
     pwm_set_enabled(sliceTwo, true);
 }
 
@@ -136,11 +140,11 @@ void readTouchscreenTask()                                      // function to r
 
 void pidCalculation()
 {
-    float kp = 2.0;      // variable for the proportional gain (response of the system)
-    float kd = 0.0;      // variable for the derivative gain (undershooting or overshooting)
+    float kp = 1.0;      // variable for the proportional gain (response of the system)
+    float kd = 0.5;      // variable for the derivative gain (undershooting or overshooting)
     float ki = 0.0;      // variable for the integral gain (constant error)
-    static float ixerror = 0.0;         // variable for the integral of the x axis error
-    static float iyerror = 0.0;         // variable for the integral of the y axis error
+    float ixerror = 0.0;         // variable for the integral of the x axis error
+    float iyerror = 0.0;         // variable for the integral of the y axis error
     
     dt = touchdt;
 
@@ -172,9 +176,9 @@ void pidCalculation()
 
 void motorControlTask()
 { 
-    uint16_t ccOne = taux + 3750;
+    uint16_t ccOne = (taux * mapX) + flatX;
     tauy != tauy;
-    uint16_t ccTwo = tauy + 3750;
+    uint16_t ccTwo = (tauy * mapY) + flatY;
 
     //printf("ccOne: %d\tccTwo: %d\n", ccOne, ccTwo);
 

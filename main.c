@@ -37,8 +37,12 @@ uint8_t channelTwo;    // channel for the y axis servo
 uint8_t divI = 50;    // divI value
 uint8_t divF = 0;    // divF value
 uint16_t top = 37499;    // top value
+
+// CHANGE THE VALUES BELOW TO LEVEL THE TOUCHSCREEN
 uint16_t flatX = 3750;    // variable for leveling the x axis
 uint16_t flatY = 3750;    // variable for leveling the y axis
+
+// CHANGE THE RATIOS BELOW DEPENDING ON HOW MUCH THE SERVOS SHOULD ROTATE (IN DEGREES) PER HORIZONTAL DISTANCE (IN MM)
 uint16_t mapX = (165/45) * 25;    // variable for translating x distance to degrees of rotation (see next line)
 // (165 mm / 45*) * 25 cc per degree
 uint16_t mapY = (105/45) * 25;    // variable for translating y distance to degrees of rotation (see next line)

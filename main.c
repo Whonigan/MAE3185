@@ -8,8 +8,8 @@
 // PINS
 #define SCL 1 // Define GPIO for i2c0 SCL Line
 #define SDA 0 // Define GPIO for i2c0 SDA Line
-#define servoOnePin 15
-#define servoTwoPin 10
+#define servoOnePin 15    // gpio for the x axis servo
+#define servoTwoPin 10    // gpio for the y axis servo
 
 // TOUCHSCREEN
 #define addr 0x48 // touchscreen target address both A0 and A1 are held low making address 1001000
@@ -28,19 +28,21 @@ uint8_t y[2] = {0, 0};
 uint8_t z[2] = {0, 0};
 
 // SERVO
-uint16_t ccOne = 0;
-uint16_t ccTwo = 0;
-uint8_t sliceOne;
-uint8_t sliceTwo;
-uint8_t channelOne;
-uint8_t channelTwo;
-uint8_t divI = 50;
-uint8_t divF = 0;
-uint16_t top = 37499;
-uint16_t flatX = 3750;
-uint16_t flatY = 3750;
-uint16_t mapX = (165/45) * 25;
-uint16_t mapY = (105/45) * 25;
+uint16_t ccOne = 0;    // variable for the x axis cc value
+uint16_t ccTwo = 0;    // variable for the y axis the cc value
+uint8_t sliceOne;    // slice for the x axis servo
+uint8_t sliceTwo;    // slice for the y axis servo
+uint8_t channelOne;    // channel for the x axis servo
+uint8_t channelTwo;    // channel for the y axis servo
+uint8_t divI = 50;    // divI value
+uint8_t divF = 0;    // divF value
+uint16_t top = 37499;    // top value
+uint16_t flatX = 3750;    // variable for leveling the x axis
+uint16_t flatY = 3750;    // variable for leveling the y axis
+uint16_t mapX = (165/45) * 25;    // variable for translating x distance to degrees of rotation (see next line)
+// (165 mm / 45*) * 25 cc per degree
+uint16_t mapY = (105/45) * 25;    // variable for translating y distance to degrees of rotation (see next line)
+// (105 mm / 45*) * 25 cc per degree
 
 // TIMING
 const uint touchdt = 5;      // variable for how often the read touchscreen task should be executed
@@ -89,7 +91,7 @@ void motorSetup()
 
     pwm_set_clkdiv_int_frac(sliceOne, divI, divF);
     pwm_set_wrap(sliceOne, top);
-    pwm_set_chan_level(sliceOne, channelOne, flatX);
+    pwm_set_chan_level(sliceOne, channelOne, flatX);    // set the x axis servo to the flat position
     pwm_set_enabled(sliceOne, true);
 
     gpio_init(servoTwoPin);
@@ -101,7 +103,7 @@ void motorSetup()
 
     pwm_set_clkdiv_int_frac(sliceTwo, divI, divF);
     pwm_set_wrap(sliceTwo, top);
-    pwm_set_chan_level(sliceTwo, channelTwo, flatY);
+    pwm_set_chan_level(sliceTwo, channelTwo, flatY);    // set the y axis servo to the flat position
     pwm_set_enabled(sliceTwo, true);
 }
 
@@ -176,14 +178,14 @@ void pidCalculation()
 
 void motorControlTask()
 { 
-    uint16_t ccOne = (taux * mapX) + flatX;
-    tauy != tauy;
-    uint16_t ccTwo = (tauy * mapY) + flatY;
+    uint16_t ccOne = (taux * mapX) + flatX;    // map taux (horizontal distance) to degrees of rotation and add that value to the flat position
+    tauy != tauy;    // convert positive tauy value to negative and negative tauy value to positive
+    uint16_t ccTwo = (tauy * mapY) + flatY;    // // map tauy (horizontal distance) to degrees of rotation and add that value to the flat position
 
     //printf("ccOne: %d\tccTwo: %d\n", ccOne, ccTwo);
 
-    pwm_set_chan_level(sliceOne, channelOne, ccOne);
-    pwm_set_chan_level(sliceTwo, channelTwo, ccTwo);
+    pwm_set_chan_level(sliceOne, channelOne, ccOne);    // move the x axis servo
+    pwm_set_chan_level(sliceTwo, channelTwo, ccTwo);    // move the y axis servo
 }
 
 printData()
@@ -195,11 +197,11 @@ int main()
 {
     stdio_init_all();
 
-    touchscreenSetup();
+    touchscreenSetup();    // call the touch screen setup function
 
-    motorSetup();
+    motorSetup();    // call the motor setup function
   
-    sleep_ms(10000);
+    sleep_ms(3000);    // sleep for 3 seconds while we get things ready
     printf("\ncurrenttime\txcurrent\tycurrent\tcurrentxerror\tcurrentyerror\tdxerror\tdyerror\ttaux\ttauy\n");
 
     while (true)

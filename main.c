@@ -146,9 +146,14 @@ void readTouchscreenTask()                                      // function to r
 
 void pidCalculation()
 {
-    float kp = 1.0;      // variable for the proportional gain (response of the system)
-    float kd = 0.5;      // variable for the derivative gain (undershooting or overshooting)
-    float ki = 0.0;      // variable for the integral gain (constant error)
+    float kpX = 1.0;      // variable for the proportional gain (response of the system)
+    float kdX = 0.5;      // variable for the derivative gain (undershooting or overshooting)
+    float kiX = 0.0;      // variable for the integral gain (constant error)
+
+    float kpY = 1.0;      // variable for the proportional gain (response of the system)
+    float kdY = 0.5;      // variable for the derivative gain (undershooting or overshooting)
+    float kiY = 0.0;      // variable for the integral gain (constant error)
+    
     float ixerror = 0.0;         // variable for the integral of the x axis error
     float iyerror = 0.0;         // variable for the integral of the y axis error
     
@@ -169,8 +174,8 @@ void pidCalculation()
 
     //printf("ix Error: %f\tiy Error: %f\n", ixerror, iyerror);
 
-    taux = kp * currentxerror + kd * dxerror + ki * ixerror;       // calculate tau for x
-    tauy = kp * currentyerror + kd * dyerror + ki * iyerror;       // calculate tau for y
+    taux = kpX * currentxerror + kdX * dxerror + kiX * ixerror;       // calculate tau for x
+    tauy = kpY * currentyerror + kdY * dyerror + kiY * iyerror;       // calculate tau for y
 
     //printf("Proportional X: %f\tProportional Y: %f\n", (kp * currentxerror), (kp * currentyerror));
 
